@@ -125,7 +125,7 @@
     <div class="card">
       <h2>Posters and room size</h2>
       <div class="row">Posters:
-        <select id="posters"><option value="marlowe">Hers</option><option value="current">Current prints</option><option value="none">None</option></select>
+        <select id="posters"><option value="hers">Hers</option><option value="current">Current prints</option><option value="none">None</option></select>
       </div>
       <div class="row">Cabinet wall length <input type="number" id="roomW" min="200" max="700"> cm &nbsp; Bed wall length <input type="number" id="roomD" min="200" max="700"> cm</div>
       <div class="hint">Your measurements: cabinet wall 300 cm, bed wall 320 cm, the open door reaches 240 cm from the cabinet wall, and the window is 100 cm from the cabinet wall, 105 cm wide, with its sill at 90 cm. The wardrobe, chest and rug sizes are still estimates.</div>
@@ -227,11 +227,11 @@ const hist=[];
 
 function presetPos(W,D){return{bed:[0,0,0],tA:[W-205,0,0],tB:[W-105,0,0],chest:[100,D-40,180],rug:[100,35,0],
   wardrobe:[W-148,D-58,180],dbl:[5,0,0],bedside:[156,0,0],cabinet:[200,0,0]};}
-function applyPreset(s,name){const pos=presetPos(s.room.W,s.room.D), m=name==='marlowe';
+function applyPreset(s,name){const pos=presetPos(s.room.W,s.room.D), m=name==='hers';
   s.items=ITEM_DEFS.map(([id,type,g])=>{const [x,y,rot]=pos[id];return{id,type,x,y,rot,on:id==='wardrobe'?true:(g==='m'?m:!m)};});
-  s.posters=m?'marlowe':'current'; s.items.forEach(it=>clampItem(it,s.room));}
-function fresh(){const s={room:{W:300,D:320},walls:{...DEFAULT_WALLS},view:0,labels:false,swatches:BUILTIN_SWATCHES.map(x=>({...x})),items:[],posters:'marlowe'};
-  applyPreset(s,'marlowe');return s;}
+  s.posters=m?'hers':'current'; s.items.forEach(it=>clampItem(it,s.room));}
+function fresh(){const s={room:{W:300,D:320},walls:{...DEFAULT_WALLS},view:0,labels:false,swatches:BUILTIN_SWATCHES.map(x=>({...x})),items:[],posters:'hers'};
+  applyPreset(s,'hers');return s;}
 function load(){try{const s=JSON.parse(localStorage.getItem(LS));if(!s||!Array.isArray(s.items))return null;
   s.items=s.items.filter(i=>ITEM_DEFS.some(([id,type])=>id===i.id&&type===i.type));
   for(const [id,type] of ITEM_DEFS)if(!s.items.find(i=>i.id===id))s.items.push({id,type,x:0,y:0,rot:0,on:false});
@@ -335,7 +335,7 @@ function wallFeatures(w){const {W,D}=S.room,a=arch(),f=[];
   if(w==='E'){const [y0,y1]=a.win;f.push(R(y0,y1,90,215,'#cfe2c9','#ffffff',5));
     for(let v=95;v<212;v+=5)f.push(L(y0+2,v,y1-2,v,'#fbfbf9',2.2));
     f.push(L((y0+y1)/2,90,(y0+y1)/2,215,'#ffffff',4),C(a.clock,188,18,'#d9a441','#caa577',2),L(a.clock,188,a.clock+4,199,'#fff',2),L(a.clock,188,a.clock+9,185,'#fff',2));}
-  if(S.posters==='marlowe'){
+  if(S.posters==='hers'){
     if(w==='N'){f.push(R(28,74,112,182,'#f5bfd0'),L(34,168,68,168,'#d6254d',3),L(36,160,66,160,'#d6254d',3),L(38,152,62,152,'#d6254d',3),L(40,144,60,144,'#d6254d',3),L(26,182,76,182,'#b98d5b',3));
       const lolly=['#2f3a5a','#6cc6d2','#222','#f59a95','#f6a5b4','#f4d8a0','#f3a0b8','#2a2f3a','#333','#7fd0d9','#f5a38a','#8bb6e3'];
       f.push(R(148,206,146,228,'#eef0ef','#ffffff',3));
@@ -518,7 +518,7 @@ document.addEventListener('keydown',e=>{
   else if(e.key==='Escape'){sel=null;renderAll();}});
 document.querySelectorAll('#viewSeg button').forEach(b=>b.onclick=()=>change(()=>S.view=+b.dataset.v));
 $('undoBtn').onclick=undo;
-$('presetM').onclick=()=>{if(confirm("Move all the furniture back to my suggested layout with her things? (Wall colours are kept, and Undo works.)"))change(()=>applyPreset(S,'marlowe'));};
+$('presetM').onclick=()=>{if(confirm("Move all the furniture back to my suggested layout with her things? (Wall colours are kept, and Undo works.)"))change(()=>applyPreset(S,'hers'));};
 $('presetN').onclick=()=>{if(confirm('Put the room back to how it is now? (Wall colours are kept, and Undo works.)'))change(()=>applyPreset(S,'now'));};
 $('lblAll').onchange=e=>change(()=>S.labels=e.target.checked);
 $('posters').onchange=e=>change(()=>S.posters=e.target.value);
