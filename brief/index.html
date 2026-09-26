@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Room swap: brief for Gemini</title>
+<style>
+  body{font-family:system-ui,"Segoe UI",sans-serif;margin:0;background:#faf8f5;color:#2b2b2b;line-height:1.5}
+  main{max-width:900px;margin:0 auto;padding:16px}
+  h1{font-size:22px;margin:4px 0}
+  h2{font-size:17px;margin:26px 0 8px}
+  .card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:12px 14px;margin:12px 0}
+  img{width:100%;height:auto;display:block;border-radius:8px;border:1px solid #e5e1da}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+  .grid figure{margin:0}
+  figcaption{font-size:13.5px;margin-top:6px}
+  pre{white-space:pre-wrap;font-family:inherit;font-size:14px;background:#f4f2ee;border-radius:8px;padding:10px 12px;margin:8px 0 0}
+  button{border:1px solid #5d6d60;background:#5d6d60;color:#fff;border-radius:8px;padding:7px 14px;font-size:14px;cursor:pointer}
+  button.done{background:#fff;color:#5d6d60}
+  .hint{color:#666;font-size:13.5px}
+  ol,ul{padding-left:20px;margin:6px 0}
+  a{color:#3d6b8f}
+</style>
+</head>
+<body>
+<main>
+  <h1>Room swap: brief for Gemini</h1>
+  <div class="hint">Use this with your own photos of the room. Long-press a picture to save it, and tap <b>Copy</b> to copy a prompt. To change the layout, use the <a href="../">room planner</a>.</div>
+
+  <h2>How to use it</h2>
+  <div class="card">
+    <ol>
+      <li>Start a <b>new Gemini chat for each camera angle</b>.</li>
+      <li>Attach, in this order: <b>your photo</b> of the room from that angle, then the <b>matching diagram</b> below. You can also add photos of her furniture in her current room.</li>
+      <li>Paste <b>Prompt 1</b> (the furniture swap) and send it.</li>
+      <li>Once you're happy with the furniture, attach a <b>paint swatch screenshot</b> in the same chat and paste <b>Prompt 2</b>. Repeat Prompt 2 with each swatch she wants to try.</li>
+    </ol>
+    <div class="hint">Tips: if Gemini changes things it shouldn't, reply "Keep everything else exactly as in my photo." Colours on a screen aren't exact, so get a tester pot of the favourite before buying.</div>
+  </div>
+
+  <h2>Diagrams: one per camera angle</h2>
+  <div class="grid">
+    <figure class="card"><img src="view-1-wardrobe-corner.png" alt="Diagram, view 1"><figcaption><b>View 1: from the wardrobe corner.</b> Pair it with your photo looking at the bed corner, where the green walls with the Sonic poster and the abstract print meet.</figcaption></figure>
+    <figure class="card"><img src="view-2-doorway.png" alt="Diagram, view 2"><figcaption><b>View 2: from the doorway.</b> Pair it with your photo of the Sonic poster, the glass cabinet and the window.</figcaption></figure>
+    <figure class="card"><img src="view-3-bed-head-corner.png" alt="Diagram, view 3"><figcaption><b>View 3: from the head of the bed.</b> Pair it with your photo of the window, clock and wardrobe.</figcaption></figure>
+    <figure class="card"><img src="view-4-window-corner.png" alt="Diagram, view 4"><figcaption><b>View 4: from the window corner.</b> Pair it with your photo of the wardrobe, round mirror, door and bed.</figcaption></figure>
+    <figure class="card"><img src="floor-plan.png" alt="Floor plan"><figcaption><b>Floor plan from above.</b> This is an extra you can attach if Gemini gets the positions wrong.</figcaption></figure>
+  </div>
+  <div class="hint">Walls are grey in the diagrams on purpose, because the colour comes from the swatch. Dashed see-through shapes are furniture that would otherwise block the view.</div>
+
+  <h2>Prompt 1: swap the furniture</h2>
+  <div class="card">
+    <button data-copy="p1">Copy</button>
+<pre id="p1">I'm redecorating a child's bedroom. The first image is a photo of the room as it is now. The second image is a to-scale diagram of the new furniture layout, seen from roughly the same corner. Any further images show the furniture that is moving in.
+
+Create a photo-realistic version of my photo with the new layout. It must look like a real photograph taken from exactly the same position with the same lens, not a 3D render.
+
+Keep the room itself exactly as it is: walls and their current paint, ceiling, beige carpet, the door, the window with white shutters, the radiator under the window, the white three-door wardrobe, the round wooden-framed mirror, and the orange and copper ceiling light.
+
+Remove: the grey metal double bed and its bedding and cushions, the bedside table and lamp, the white glass-fronted cabinet and the photo frames on top of it, the black-and-white Sonic poster, the black-and-white abstract print, the framed map leaning against the wall, and the step stools.
+
+Add, positioned as in the diagram:
+- A white IKEA Busunge children's bed, 170 cm long and 90 cm wide, with rounded headboard and footboard, pink bedding, a few soft toys and stickers on the headboard. It goes in the same corner as the double bed is now: headboard against the wall where the Sonic poster is, long side against the wall with the abstract print.
+- Two white IKEA Trofast stepped storage units with pink and mint-green pull-out bins. Each is 100 cm wide and 46 cm deep, with three steps 42, 68 and 95 cm high. They stand side by side along the Sonic-poster wall, to the right of the bed. The first steps up from 42 cm next to the bed to 95 cm; the second steps back down to 42 cm towards the window wall, so the tallest parts meet in the middle. A few soft toys and dolls on top.
+- A white five-drawer chest of drawers with light oak top and sides (about 42 cm wide and 108 cm tall) against the wall under the round mirror, between the wardrobe and the door.
+- A multicoloured harlequin (diamond-pattern) rug, about 190 by 200 cm, in the middle of the floor.
+- Posters: a Scandinavian ice-lolly print titled "Färger" and a colourful "Counting to 100" chart above the storage units; a pink "Though she be but little, she is fierce" print above the head of the bed; a "My First Solar System" poster and a pink Dala horse print on the wall along the bed.
+
+Keep the sizes true to the room: it is 300 cm by 320 cm with a ceiling about 240 cm high.</pre>
+  </div>
+
+  <h2>Prompt 2: try a paint colour</h2>
+  <div class="card">
+    <div class="hint">Attach the swatch screenshot, then send this. Change the part in [brackets] to the walls you want.</div>
+    <button data-copy="p2">Copy</button>
+<pre id="p2">Now repaint [all four walls] in the exact colour of the paint swatch in the image I've just attached. Change only the wall paint. Keep the furniture, posters, lighting, shadows, ceiling, carpet, doors, woodwork and everything else exactly the same, and keep it photo-realistic.</pre>
+    <div class="hint" style="margin-top:8px">Other options for the [brackets]:<br>
+      "only the wall behind the head of the bed"<br>
+      "the wall behind the bed and the wall with the storage units, and leave the others as they are"<br>
+      "all four walls, with the wall behind the bed in the swatch colour and the others in a very pale version of it"</div>
+  </div>
+
+  <h2>Room details, in case Gemini needs them</h2>
+  <div class="card">
+    <button data-copy="p3">Copy</button>
+<pre id="p3">Room: 300 cm (the Sonic-poster wall) by 320 cm (the wall along the bed), ceiling about 240 cm.
+Door: in the corner of the wardrobe wall, next to the bed wall. It opens into the room and lies flat against the bed wall, reaching 240 cm from the Sonic-poster wall.
+Window: on the wall opposite the bed wall, starting 100 cm from the Sonic-poster wall, 105 cm wide, sill 90 cm from the floor, white shutters, radiator underneath.
+Wardrobe: white, three doors, about 150 cm wide and nearly full height, against the wall opposite the Sonic-poster wall, in the corner by the window wall.
+Round wooden-framed mirror: on the same wall as the wardrobe, between the wardrobe and the door.
+Her bed: 170 x 90 cm. Storage: two stepped units, each 100 cm wide, 46 cm deep, steps 42 / 68 / 95 cm high. Chest of drawers: about 42 cm wide, 40 cm deep, 108 cm tall. Rug: about 190 x 200 cm.</pre>
+  </div>
+</main>
+<script>
+document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{
+  const txt=document.getElementById(b.dataset.copy).innerText;
+  try{await navigator.clipboard.writeText(txt);}catch(e){const r=document.createRange();r.selectNodeContents(document.getElementById(b.dataset.copy));const s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy');}
+  b.textContent='Copied ✓';b.classList.add('done');setTimeout(()=>{b.textContent='Copy';b.classList.remove('done');},1800);});
+</script>
+</body>
+</html>
