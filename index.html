@@ -193,8 +193,8 @@ const C=(u,v,r,fill,stroke,w)=>({t:'circle',u,v,r,fill,stroke,w});
 const swName=hex=>{const s=S.swatches.find(x=>x.hex.toLowerCase()===hex.toLowerCase());return s?s.name:hex;};
 
 // ============ furniture catalogue (local coords: back against wall at y=0, front faces +y) ============
-// One stepped storage unit: 3 columns across 100 cm, 18 cm deep. Heights are per column, left to right.
-const TD=18, TCW=100/3;
+// One stepped storage unit: 3 columns across 100 cm, 46 cm (18 in) deep. Heights are per column, left to right.
+const TD=46, TCW=100/3;
 const TBINS={42:[['p','L']],68:[['g','L'],['p','L']],95:[['p','L'],['g','S'],['p','L'],['g','S']]};
 function trofastUnit(heights){const p=[];
   heights.forEach((h,i)=>{const x0=i*TCW,x1=x0+TCW,a=x0+1.5,b=x1-1.5;
@@ -211,9 +211,9 @@ const TYPES={
     box(3,87,5,165,24,38,'#f5f0e4'),box(10,80,10,42,38,47,'#f7d3db'),box(5,85,62,160,38,42,'#f5c3cf')],
     blobs:[{x:40,y:125,z:47,r:9,c:'#a8744a'},{x:68,y:98,z:45,r:7,c:'#3f9b4a'},{x:14,y:3,z:99,r:7,c:'#ffffff'}]})},
   trofastUp:{name:'Trofast unit (low → high)',w:100,d:TD,plan:PINK,build:()=>({parts:trofastUnit([42,68,95]),
-    blobs:[{x:50,y:9,z:75,r:7,c:'#7a4a2e'},{x:83,y:9,z:105,r:10,c:'#ffffff'},{x:89,y:9,z:113,r:3,c:'#e0282e'}]})},
+    blobs:[{x:50,y:23,z:75,r:7,c:'#7a4a2e'},{x:83,y:23,z:105,r:10,c:'#ffffff'},{x:89,y:23,z:113,r:3,c:'#e0282e'}]})},
   trofastDown:{name:'Trofast unit (high → low)',w:100,d:TD,plan:GREEN,build:()=>({parts:trofastUnit([95,68,42]),
-    blobs:[{x:17,y:9,z:104,r:9,c:'#9dbbe6'},{x:50,y:9,z:75,r:7,c:'#f7a35c'}]})},
+    blobs:[{x:17,y:23,z:104,r:9,c:'#9dbbe6'},{x:50,y:23,z:75,r:7,c:'#f7a35c'}]})},
   chest:{name:"Her chest of drawers",w:42,d:40,plan:'#ffffff',build:()=>({parts:[
     box(0,42,0,40,0,108,'#f7f7f5',{fc:{'+z':OAK,'+x':OAK,'-x':OAK},deco:[{face:'+y',items:[0,1,2,3,4].flatMap(k=>{const v0=6+k*20;return[R(1,41,v0,v0+19,'none','#e0e0dc',1),L(16,v0+15,26,v0+15,'#c4c4bf',2.5)];})}]}),
     box(3,39,5,35,108,116,'#c94f6d'),box(6,36,8,33,116,121,'#5aa7a0')]})},
@@ -253,7 +253,7 @@ let S=load()||fresh();
 let sel=null, selWalls=new Set(['N','W']), drag=null, TAB='plan';
 const hist=[];
 
-function presetPos(W,D){return{bed:[0,0,0],tA:[W-205,0,0],tB:[W-105,0,0],chest:[100,D-40,180],rug:[100,35,0],
+function presetPos(W,D){return{bed:[0,0,0],tA:[W-205,0,0],tB:[W-105,0,0],chest:[100,D-40,180],rug:[100,55,0],
   wardrobe:[W-148,D-58,180],dbl:[5,0,0],bedside:[156,0,0],cabinet:[200,0,0]};}
 function applyPreset(s,name){const pos=presetPos(s.room.W,s.room.D), m=name==='hers';
   s.items=ITEM_DEFS.map(([id,type,g])=>{const [x,y,rot]=pos[id];return{id,type,x,y,rot,on:id==='wardrobe'?true:(g==='m'?m:!m)};});
