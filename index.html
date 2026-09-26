@@ -2,24 +2,30 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Green room planner</title>
 <style>
   body{font-family:system-ui,"Segoe UI",sans-serif;margin:0;background:#faf8f5;color:#2b2b2b}
   header{padding:16px 24px 2px}
   h1{font-size:22px;margin:0 0 4px}
   .sub{color:#666;font-size:14px}
+  .tabs{display:flex;gap:6px;padding:12px 24px 0;flex-wrap:wrap}
+  .tabs button{border:1px solid #d3cfc8;background:#efece7;padding:9px 16px;border-radius:10px;font-size:14.5px;cursor:pointer}
+  .tabs button.on{background:#5d6d60;color:#fff;border-color:#5d6d60}
+  .tabpane[hidden]{display:none!important}
   .controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding:12px 24px}
-  .seg{display:inline-flex;border:1px solid #c9c9c9;border-radius:8px;overflow:hidden}
+  .seg{display:inline-flex;border:1px solid #c9c9c9;border-radius:8px;overflow:hidden;flex-wrap:wrap}
   .seg button{border:0;background:#fff;padding:7px 12px;font-size:13.5px;cursor:pointer}
   .seg button+button{border-left:1px solid #ddd}
   .seg button.on{background:#5d6d60;color:#fff}
-  .btn{border:1px solid #c9c9c9;background:#fff;border-radius:8px;padding:7px 12px;font-size:13.5px;cursor:pointer}
+  .btn{border:1px solid #c9c9c9;background:#fff;border-radius:8px;padding:7px 12px;font-size:13.5px;cursor:pointer;display:inline-block}
   .btn:hover,.seg button:hover:not(.on){background:#f1efeb}
-  .wrap{display:flex;flex-wrap:wrap;gap:18px;padding:0 24px 24px;align-items:flex-start}
+  .wrap{display:flex;flex-wrap:wrap;gap:18px;padding:12px 24px 24px;align-items:flex-start}
   .card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:12px 14px}
   .card h2{font-size:15px;margin:2px 0 8px;color:#444}
   .iso{flex:1 1 620px;max-width:980px;position:sticky;top:10px}
-  .side{flex:0 1 600px;display:flex;flex-direction:column;gap:18px}
+  .main{flex:1 1 620px;max-width:1100px}
+  .side{flex:0 1 600px;display:flex;flex-direction:column;gap:18px;min-width:0}
   svg{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none}
   #plan{touch-action:none}
   .cap{font-size:12.5px;color:#777;margin:6px 0 0}
@@ -35,30 +41,43 @@
   .wallchip{display:flex;align-items:center;gap:8px;border:2px solid #ddd;border-radius:8px;padding:6px 8px;background:#fff;cursor:pointer;font-size:13px;text-align:left}
   .wallchip.on{border-color:#ff7a00;background:#fff7ef}
   .wallchip .sw{width:26px;height:26px;border-radius:5px;border:1px solid #0002;flex:none}
-  .swgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;margin-top:10px}
+  .swgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px;margin-top:10px}
   .swatch{border:1px solid #ddd;border-radius:8px;overflow:hidden;cursor:pointer;position:relative;background:#fff}
   .swatch .blk{height:46px}
-  .swatch .nm{font-size:11.5px;padding:4px 6px;line-height:1.25}
+  .swatch .nm{font-size:11.5px;padding:4px 6px;line-height:1.25;word-break:break-word}
   .swatch .hx{color:#999}
-  .swatch .x{position:absolute;top:2px;right:4px;font-size:13px;color:#fff;text-shadow:0 0 3px #000;display:none}
-  .swatch:hover .x{display:block}
+  .swatch .x{position:absolute;top:0;right:0;font-size:13px;color:#fff;text-shadow:0 0 3px #000;padding:3px 6px}
   .swatch:hover{box-shadow:0 0 0 2px #ff7a00}
   .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:13.5px}
-  input[type=text],input[type=number]{border:1px solid #ccc;border-radius:6px;padding:5px 7px;font-size:13.5px}
+  input[type=text],input[type=number],select{border:1px solid #ccc;border-radius:6px;padding:5px 7px;font-size:13.5px;background:#fff}
   input[type=number]{width:70px}
   details{margin-top:10px;font-size:13.5px}
-  summary{cursor:pointer;color:#445}
-  #photoCv{display:none;max-width:100%;margin-top:8px;cursor:crosshair;border-radius:6px}
-  #pick{width:28px;height:28px;border-radius:5px;border:1px solid #0002;display:inline-block;vertical-align:middle}
+  summary{cursor:pointer;color:#445;font-weight:600}
+  #sampCv{display:none;max-width:100%;margin-top:8px;cursor:crosshair;border-radius:6px;touch-action:manipulation}
+  #pick{width:28px;height:28px;border-radius:5px;border:1px solid #0002;display:inline-block;vertical-align:middle;background:#fff}
   .hint{font-size:12.5px;color:#777}
+  .cmpgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:10px}
+  .cmpcard{border:2px solid #e3e0da;border-radius:10px;overflow:hidden;cursor:pointer;background:#fff}
+  .cmpcard:hover{border-color:#ff7a00}
+  .cmpcard canvas,.cmpcard svg{display:block;width:100%;height:auto}
+  .cmpcard .nm{padding:6px 8px;font-size:13px;display:flex;gap:6px;align-items:center}
+  .cmpcard .dot{width:14px;height:14px;border-radius:3px;border:1px solid #0002;flex:none}
+  @media (max-width:700px){header,.controls,.tabs,.wrap{padding-left:10px;padding-right:10px}.iso{position:static}}
 </style>
 </head>
 <body>
 <header>
   <h1>Green room planner</h1>
-  <div class="sub">Drag furniture on the floor plan, paint the walls from your swatches, and walk round the 3D view. Your changes are saved in this browser.</div>
+  <div class="sub">Plan the furniture, move things around, and try paint colours from your own swatches. Everything is saved in this browser.</div>
 </header>
 
+<div class="tabs" id="tabs">
+  <button data-tab="plan" class="on">Room plan &amp; 3D</button>
+  <button data-tab="compare">Compare colours</button>
+</div>
+
+<!-- ================= PLAN TAB ================= -->
+<section id="tab-plan" class="tabpane">
 <div class="controls">
   <div class="seg" id="viewSeg">
     <button data-v="0">📷 1 Wardrobe corner</button>
@@ -74,54 +93,24 @@
   <button class="btn" id="copyBtn" title="Copies the layout as text you can paste to Claude or into another browser">Copy layout</button>
   <button class="btn" id="pasteBtn">Paste layout</button>
 </div>
-
-<div class="wrap">
+<div class="wrap" style="padding-top:0">
   <div class="card iso">
     <h2 id="isoTitle"></h2>
     <svg id="iso" xmlns="http://www.w3.org/2000/svg"></svg>
     <div class="cap">Tall furniture on the walls nearest the camera turns see-through (dashed) so it doesn't block the view. Whatever you've selected is outlined in orange.</div>
   </div>
-
-  <div class="side">
+  <div class="side" id="side-plan">
     <div class="card">
       <h2>Floor plan: drag things to move them</h2>
       <div class="selbar" id="selbar"></div>
       <svg id="plan" xmlns="http://www.w3.org/2000/svg"></svg>
       <div class="warn" id="warn"></div>
-      <div class="cap">Click a piece to select it. <b>R</b> rotates it, the arrow keys nudge it 1 cm (Shift for 10 cm), and <b>Delete</b> takes it out of the room. Pieces snap to walls and to each other's edges. Click a wall to select it for painting, or click a 📷 to look from that corner.</div>
+      <div class="cap">Click a piece to select it. <b>R</b> rotates it, the arrow keys nudge it 1 cm (Shift for 10 cm), and <b>Delete</b> takes it out of the room. On a phone, use the buttons above the plan. Pieces snap to walls and to each other's edges. Tap a wall to select it for painting, or tap a 📷 to look from that corner.</div>
     </div>
-
-    <div class="card">
-      <h2>Wall colours</h2>
-      <div class="hint">1. Pick the walls to paint (orange border), 2. click a swatch.</div>
-      <div class="walls" id="wallBtns" style="margin-top:8px"></div>
-      <div class="row"><button class="btn" id="allWalls">Select all 4 walls</button><button class="btn" id="resetWalls">Back to today's colours</button></div>
-      <div class="swgrid" id="swatches"></div>
-      <details id="addDetails">
-        <summary>Add a swatch</summary>
-        <div class="row">
-          <input type="text" id="swName" placeholder="Name, e.g. Farrow &amp; Ball Setting Plaster" style="flex:1;min-width:200px">
-        </div>
-        <div class="row">
-          <input type="color" id="swColor" value="#a8b89a">
-          <input type="text" id="swHex" value="#a8b89a" style="width:90px">
-          <button class="btn" id="swAdd">Add swatch</button>
-        </div>
-        <div class="row">
-          <span>Or take the colour from a photo of a paint chip:</span>
-          <input type="file" id="photoIn" accept="image/*">
-        </div>
-        <canvas id="photoCv"></canvas>
-        <div class="hint" id="photoHint" style="display:none">Click the chip in the photo to pick its colour <span id="pick"></span>. Photos pick up the room lighting, so you may need to tweak the colour.</div>
-      </details>
-      <div class="hint" style="margin-top:8px">Screen colours are only a guide. Paint always looks different on the wall, so try a tester pot before you commit.</div>
-    </div>
-
     <div class="card">
       <h2>Furniture in the room</h2>
       <div class="inv" id="inv"></div>
     </div>
-
     <div class="card">
       <h2>Posters and room size</h2>
       <div class="row">Posters:
@@ -132,6 +121,43 @@
     </div>
   </div>
 </div>
+</section>
+
+<!-- ================= COMPARE TAB ================= -->
+<section id="tab-compare" class="tabpane" hidden>
+<div class="wrap">
+  <div class="card main">
+    <h2>Compare colours</h2>
+    <div class="hint" id="cmpWalls" style="margin-top:6px"></div>
+    <div class="cmpgrid" id="cmpGrid"></div>
+  </div>
+  <div class="side" id="side-compare"></div>
+</div>
+</section>
+
+<!-- Wall colours card (moved into whichever tab is open) -->
+<div class="card" id="wallsCard">
+  <h2>Wall colours</h2>
+  <div class="hint">1. Pick the walls to paint (orange border). 2. Tap a swatch.</div>
+  <div class="walls" id="wallBtns" style="margin-top:8px"></div>
+  <div class="row"><button class="btn" id="allWalls">Select all 4 walls</button><button class="btn" id="resetWalls">Back to today's colours</button></div>
+  <div class="swgrid" id="swatches"></div>
+  <details id="addDetails">
+    <summary>Add a swatch (from a screenshot, a photo or a colour code)</summary>
+    <div class="hint" style="margin-top:6px">Screenshot a colour on a paint website, load the screenshot here, and tap the colour. You can pick several colours from one screenshot. On a computer you can also paste a screenshot with Ctrl+V.</div>
+    <div class="row"><input type="file" id="sampIn" accept="image/*"></div>
+    <canvas id="sampCv"></canvas>
+    <div class="row">Picked <span id="pick"></span>
+      <input type="color" id="swColor" value="#a8b89a">
+      <input type="text" id="swHex" value="#a8b89a" style="width:90px">
+    </div>
+    <div class="row">
+      <input type="text" id="swName" placeholder="Name, e.g. Dulux Blush Pink" style="flex:1;min-width:180px">
+      <button class="btn" id="swAdd">Add swatch</button>
+    </div>
+  </details>
+  <div class="hint" style="margin-top:8px">Screen colours are only a guide. Paint looks different on a real wall, so try a tester pot before you commit.</div>
+</div>
 
 <script>
 // ============ constants ============
@@ -139,9 +165,10 @@ const H=240, K=1.5, CS=Math.cos(Math.PI/6), SN=0.5;
 const CUT='#8a8278', PINK='#f0a8bb', GREEN='#9edbb9', WHITE='#f7f6f2', OAK='#d8c3a0';
 const DEFAULT_WALLS={N:'#5d6d60',E:'#e7ddd5',S:'#e7ddd5',W:'#5d6d60'};
 const WALLNAME={N:'Cabinet wall',E:'Window wall',S:'Door & wardrobe wall',W:'Bed wall'};
+const WLIST=['N','E','S','W'], WIDX={N:1,E:2,S:3,W:4};
 const DOOR={x0:4,x1:80};   // door is in the S wall at the bed-wall corner, hinged at x0, opens flat against the bed wall
 const ROOMN={N:'+y',S:'-y',W:'+x',E:'-x'};
-// Paint swatches. New swatches can be added here as {name:'...', hex:'#rrggbb'}.
+// Built-in paint swatches: {name:'...', hex:'#rrggbb'}
 const BUILTIN_SWATCHES=[
   {name:'Green (this room now)',hex:'#5d6d60'},
   {name:'Pale (this room now)',hex:'#e7ddd5'},
@@ -163,11 +190,12 @@ function box(x0,x1,y0,y1,z0,z1,c,o={}){return Object.assign({x0,x1,y0,y1,z0,z1,c
 const R=(u0,u1,v0,v1,fill,stroke,w)=>({t:'rect',u0,u1,v0,v1,fill,stroke,w});
 const L=(u0,v0,u1,v1,stroke,w)=>({t:'line',u0,v0,u1,v1,stroke,w});
 const C=(u,v,r,fill,stroke,w)=>({t:'circle',u,v,r,fill,stroke,w});
+const swName=hex=>{const s=S.swatches.find(x=>x.hex.toLowerCase()===hex.toLowerCase());return s?s.name:hex;};
 
 // ============ furniture catalogue (local coords: back against wall at y=0, front faces +y) ============
 // One stepped storage unit: 3 columns across 100 cm, 18 cm deep. Heights are per column, left to right.
 const TD=18, TCW=100/3;
-const TBINS={17:[['p','S']],56:[['g','L'],['p','S']],95:[['p','L'],['g','S'],['p','L'],['g','S']]};
+const TBINS={42:[['p','L']],68:[['g','L'],['p','L']],95:[['p','L'],['g','S'],['p','L'],['g','S']]};
 function trofastUnit(heights){const p=[];
   heights.forEach((h,i)=>{const x0=i*TCW,x1=x0+TCW,a=x0+1.5,b=x1-1.5;
     p.push(box(a,b,0,1,0,h,'#e4e1da'),box(x0,a,0,TD,0,h,WHITE),box(b,x1,0,TD,0,h,WHITE),box(a,b,1,TD,h-2,h,WHITE),box(a,b,1,TD,0,3,WHITE));
@@ -182,10 +210,10 @@ const TYPES={
     box(0,90,165,170,0,72,'#fbfbf9'),box(0,3,5,165,16,42,'#fbfbf9'),box(87,90,5,165,16,42,'#fbfbf9'),
     box(3,87,5,165,24,38,'#f5f0e4'),box(10,80,10,42,38,47,'#f7d3db'),box(5,85,62,160,38,42,'#f5c3cf')],
     blobs:[{x:40,y:125,z:47,r:9,c:'#a8744a'},{x:68,y:98,z:45,r:7,c:'#3f9b4a'},{x:14,y:3,z:99,r:7,c:'#ffffff'}]})},
-  trofastUp:{name:'Trofast unit (low → high)',w:100,d:TD,plan:PINK,build:()=>({parts:trofastUnit([17,56,95]),
-    blobs:[{x:50,y:9,z:63,r:7,c:'#7a4a2e'},{x:83,y:9,z:105,r:10,c:'#ffffff'},{x:89,y:9,z:113,r:3,c:'#e0282e'}]})},
-  trofastDown:{name:'Trofast unit (high → low)',w:100,d:TD,plan:GREEN,build:()=>({parts:trofastUnit([95,56,17]),
-    blobs:[{x:17,y:9,z:104,r:9,c:'#9dbbe6'},{x:50,y:9,z:63,r:7,c:'#f7a35c'}]})},
+  trofastUp:{name:'Trofast unit (low → high)',w:100,d:TD,plan:PINK,build:()=>({parts:trofastUnit([42,68,95]),
+    blobs:[{x:50,y:9,z:75,r:7,c:'#7a4a2e'},{x:83,y:9,z:105,r:10,c:'#ffffff'},{x:89,y:9,z:113,r:3,c:'#e0282e'}]})},
+  trofastDown:{name:'Trofast unit (high → low)',w:100,d:TD,plan:GREEN,build:()=>({parts:trofastUnit([95,68,42]),
+    blobs:[{x:17,y:9,z:104,r:9,c:'#9dbbe6'},{x:50,y:9,z:75,r:7,c:'#f7a35c'}]})},
   chest:{name:"Her chest of drawers",w:42,d:40,plan:'#ffffff',build:()=>({parts:[
     box(0,42,0,40,0,108,'#f7f7f5',{fc:{'+z':OAK,'+x':OAK,'-x':OAK},deco:[{face:'+y',items:[0,1,2,3,4].flatMap(k=>{const v0=6+k*20;return[R(1,41,v0,v0+19,'none','#e0e0dc',1),L(16,v0+15,26,v0+15,'#c4c4bf',2.5)];})}]}),
     box(3,39,5,35,108,116,'#c94f6d'),box(6,36,8,33,116,121,'#5aa7a0')]})},
@@ -222,7 +250,7 @@ function B(type){return built[type]||(built[type]=TYPES[type].build());}
 // ============ state ============
 const LS='greenroom-planner-v3';
 let S=load()||fresh();
-let sel=null, selWalls=new Set(['N','W']), drag=null;
+let sel=null, selWalls=new Set(['N','W']), drag=null, TAB='plan';
 const hist=[];
 
 function presetPos(W,D){return{bed:[0,0,0],tA:[W-205,0,0],tB:[W-105,0,0],chest:[100,D-40,180],rug:[100,35,0],
@@ -262,7 +290,7 @@ function lface(p,face){switch(face){
 function arch(){const D=S.room.D;return{win:[100,205],rad:[88,Math.min(220,D-60)],clock:Math.min(237,D-70)};}
 
 // ============ view transform ============
-let OX=0,OY=0,VNX='+x',VNY='+y';
+let OX=0,OY=0,VNX='+x',VNY='+y',WALLS=DEFAULT_WALLS;
 const VW=()=>S.view%2?S.room.D:S.room.W, VD=()=>S.view%2?S.room.W:S.room.D;
 function tp2(x,y){const {W,D}=S.room;switch(S.view){case 0:return[x,y];case 1:return[D-y,x];case 2:return[W-x,D-y];default:return[y,W-x];}}
 function lin(a,b){switch(S.view){case 0:return[a,b];case 1:return[-b,a];case 2:return[-a,-b];default:return[b,-a];}}
@@ -329,7 +357,7 @@ function worldParts(){
     items:[R(3,6,92,108,'#bdbdbd'),L(5,100,15,100,'#8f8f8f',3),C(30,168,2.2,'#5b4636'),C(40,168,2.2,'#5b4636'),C(50,168,2.2,'#5b4636')]}]}));
   return out;}
 
-function wallFeatures(w){const {W,D}=S.room,a=arch(),f=[];
+function wallFeatures(w){const a=arch(),f=[];
   if(w==='S')f.push(R(DOOR.x0-2,DOOR.x1+2,0,202,'#ffffff'),R(DOOR.x0,DOOR.x1,0,198,'#e6e3dc'),R(86,93,118,127,'#ececec','#a8a8a8',0.8),
     C(120,158,28,'#a97c50'),C(120,158,24,'#d4dde0'),L(111,170,126,151,'#eef3f4',3));
   if(w==='E'){const [y0,y1]=a.win;f.push(R(y0,y1,90,215,'#cfe2c9','#ffffff',5));
@@ -357,45 +385,45 @@ function rugTiles(it,fn){const pal=['#c8283c','#2a9d9a','#e8b43a','#f2a7b8','#23
 
 const LBL=(x,y,t)=>`<text x="${f2(x)}" y="${f2(y)}" text-anchor="middle" font-family="Segoe UI,system-ui,sans-serif" font-size="15" font-weight="600" fill="#222" stroke="#fff" stroke-width="4" paint-order="stroke" stroke-linejoin="round">${esc(t)}</text>`;
 
-function renderIso(){
+// Build the 3D picture as SVG markup. plain=true leaves out selection outlines and labels (used for compare thumbnails).
+function isoMarkup(walls,plain){
+  WALLS=walls;
   const {W,D}=S.room, vw=VW(), vd=VD();
-  VNX=nname(lin(1,0)[0]===1?[1,0]:lin(-1,0)[0]===1?[-1,0]:null)||'+x';
   for(const n of['+x','-x','+y','-y']){const r=lin(...NV[n]);if(r[0]===1)VNX=n;if(r[1]===1)VNY=n;}
   OX=(vd+10)*CS*K+30; OY=H*K+30;
   const wid=(W+D+20)*CS*K+60, hei=((W+D+20)*SN+H)*K+50;
-  const svg=$('iso'); svg.setAttribute('viewBox',`0 0 ${f2(wid)} ${f2(hei)}`);
   let s=`<rect x="0" y="0" width="${f2(wid)}" height="${f2(hei)}" fill="#ffffff"/>`;
   s+=polyS([[0,0,0],[W,0,0],[W,D,0],[0,D,0]].map(projW),'#d9d2c7','#c9c1b5',1);
-  const rug=item('rug');
+  const rug=item('rug'), s0=plain?null:sel;
   if(rug.on){rugTiles(rug,(pts,c)=>{s+=polyS(pts.map(p=>projW([p[0],p[1],0.3])),c);});
-    if(sel==='rug'){const f=footprint(rug);s+=polyS([[f.x0,f.y0],[f.x1,f.y0],[f.x1,f.y1],[f.x0,f.y1]].map(p=>projW([p[0],p[1],0.5])),'none','#ff7a00',2);}}
-  if(sel&&sel!=='rug'&&item(sel).on){const f=footprint(item(sel));
+    if(s0==='rug'){const f=footprint(rug);s+=polyS([[f.x0,f.y0],[f.x1,f.y0],[f.x1,f.y1],[f.x0,f.y1]].map(p=>projW([p[0],p[1],0.5])),'none','#ff7a00',2);}}
+  if(s0&&s0!=='rug'&&item(s0).on){const f=footprint(item(s0));
     s+=polyS([[f.x0,f.y0],[f.x1,f.y0],[f.x1,f.y1],[f.x0,f.y1]].map(p=>projW([p[0],p[1],0.5])),'none','#ff7a00',1.5,'stroke-dasharray="6 4"');}
-  // far walls
   const WB={N:[-10,W+10,-10,0],S:[-10,W+10,D,D+10],W:[-10,0,0,D],E:[W,W+10,0,D]};
   const cutAll=()=>({'+z':CUT,'+x':CUT,'-x':CUT,'+y':CUT,'-y':CUT});
-  const walls=['N','S','E','W'].filter(farWall).map(w=>{const [x0,x1,y0,y1]=WB[w];const fc=cutAll();fc[ROOMN[w]]=S.walls[w];
-    const b=box(x0,x1,y0,y1,0,H,S.walls[w],{kind:'box',fc});b.v=vbox(b);return b;});
-  for(const w of sortParts(walls))s+=drawPart(w,false,false);
-  for(const w of['N','S','E','W'])if(farWall(w))s+=drawDeco((u,v)=>projW(WALLPT[w](u,v)),wallFeatures(w));
-  // near-wall stubs
+  const wallBoxes=WLIST.filter(farWall).map(w=>{const [x0,x1,y0,y1]=WB[w];const fc=cutAll();fc[ROOMN[w]]=WALLS[w];
+    const b=box(x0,x1,y0,y1,0,H,WALLS[w],{kind:'box',fc});b.v=vbox(b);return b;});
+  for(const w of sortParts(wallBoxes))s+=drawPart(w,false,false);
+  for(const w of WLIST)if(farWall(w))s+=drawDeco((u,v)=>projW(WALLPT[w](u,v)),wallFeatures(w));
   const ST={N:[[-10,W+10,-10,0]],S:[[-10,DOOR.x0-2,D,D+10],[DOOR.x1+2,W+10,D,D+10]],W:[[-10,0,0,D]],E:[[W,W+10,0,D]]};
   const parts=worldParts();
-  for(const w of['N','S','E','W'])if(!farWall(w))for(const [x0,x1,y0,y1] of ST[w])parts.push(box(x0,x1,y0,y1,0,8,S.walls[w],{kind:'box',fc:{'+z':CUT},item:'_stub'}));
+  for(const w of WLIST)if(!farWall(w))for(const [x0,x1,y0,y1] of ST[w])parts.push(box(x0,x1,y0,y1,0,8,WALLS[w],{kind:'box',fc:{'+z':CUT},item:'_stub'}));
   for(const p of parts)p.v=vbox(p);
-  // decide see-through per item
   const agg={};
   for(const p of parts){const a=agg[p.item]||(agg[p.item]={x0:1e9,y0:1e9,x1:-1e9,y1:-1e9,z:0});
     a.x0=Math.min(a.x0,p.v.x0);a.y0=Math.min(a.y0,p.v.y0);a.x1=Math.max(a.x1,p.v.x1);a.y1=Math.max(a.y1,p.v.y1);a.z=Math.max(a.z,p.z1);}
   const ghost={};
   for(const id in agg){const a=agg[id];const near=a.x1>vw-75||a.y1>vd-75, hug=a.x0<40||a.y0<40;
     ghost[id]=id!=='_stub'&&a.z>60&&near&&!hug;}
-  for(const p of sortParts(parts))s+=drawPart(p,ghost[p.item],p.item===sel);
-  // labels
-  for(const it of S.items){if(!it.on||!(S.labels||it.id===sel))continue;
+  for(const p of sortParts(parts))s+=drawPart(p,ghost[p.item],p.item===s0);
+  if(!plain)for(const it of S.items){if(!it.on||!(S.labels||it.id===sel))continue;
     const f=footprint(it),T=TYPES[it.type];let z=0;if(!T.flat)for(const p of B(it.type).parts)z=Math.max(z,p.z1);
     const [x,y]=projW([(f.x0+f.x1)/2,(f.y0+f.y1)/2,z+10]);s+=LBL(x,y,T.name);}
-  svg.innerHTML=s;
+  return{vb:`0 0 ${f2(wid)} ${f2(hei)}`,s};
+}
+function renderIso(){
+  const m=isoMarkup(S.walls,false),svg=$('iso');
+  svg.setAttribute('viewBox',m.vb);svg.innerHTML=m.s;
   const names={0:'📷 1 From the wardrobe corner',3:'📷 2 From the doorway',2:'📷 3 From the bed-head corner',1:'📷 4 From the window corner'};
   $('isoTitle').textContent=names[S.view];
 }
@@ -430,13 +458,11 @@ function renderPlan(){
     const short=T.name.replace("Her ","").replace('Trofast unit ','Trofast ').replace(' of drawers','');
     const vertical=(f.x1-f.x0)<52&&(f.y1-f.y0)>(f.x1-f.x0);
     const cx=X((f.x0+f.x1)/2),cy=Y((f.y0+f.y1)/2);
-    s+=`<text x="${f2(cx)}" y="${f2(cy)}" font-size="10" text-anchor="middle" dominant-baseline="middle" fill="#333" ${vertical?`transform="rotate(-90 ${f2(cx)} ${f2(cy)})"`:''} style="pointer-events:none">${esc(short.length>16&&(f.x1-f.x0)<60&&!vertical?short.split(' ')[0]:short)}</text></g>`;}
-  // architecture
+    s+=`<text x="${f2(cx)}" y="${f2(cy)}" font-size="10" text-anchor="middle" dominant-baseline="middle" fill="#333" ${vertical?`transform="rotate(-90 ${f2(cx)} ${f2(cy)})"`:''} style="pointer-events:none">${esc(short)}</text></g>`;}
   s+=`<rect x="${X(W-10)}" y="${Y(a.rad[0])}" width="${10*P}" height="${(a.rad[1]-a.rad[0])*P}" fill="#fff" stroke="#b5b5b5" style="pointer-events:none"/>`;
   const hx=DOOR.x0,dw=DOOR.x1-DOOR.x0;
   s+=`<line x1="${X(hx)}" y1="${Y(D)}" x2="${X(hx)}" y2="${Y(D-dw)}" stroke="#888" stroke-width="3" style="pointer-events:none"/>`;
   s+=`<path d="M ${X(hx)} ${Y(D-dw)} A ${dw*P} ${dw*P} 0 0 1 ${X(DOOR.x1)} ${Y(D)}" fill="none" stroke="#aaa" stroke-dasharray="5 4" style="pointer-events:none"/>`;
-  // walls
   const segs={N:[[0,0,W,0]],E:[[W,0,W,D]],S:[[0,D,DOOR.x0-2,D],[DOOR.x1+2,D,W,D]],W:[[0,0,0,D]]};
   for(const w in segs)for(const [x1,y1,x2,y2] of segs[w]){
     if(selWalls.has(w))s+=`<line x1="${X(x1)}" y1="${Y(y1)}" x2="${X(x2)}" y2="${Y(y2)}" stroke="#ff7a00" stroke-width="15" stroke-linecap="square"/>`;
@@ -455,9 +481,9 @@ function renderPlan(){
 
 // ============ side panels ============
 function renderSel(){const el=$('selbar');
-  if(!sel||!item(sel)?.on){el.innerHTML='<span class="hint">Nothing selected. Click a piece of furniture on the plan.</span>';return;}
+  if(!sel||!item(sel)?.on){el.innerHTML='<span class="hint">Nothing selected. Tap a piece of furniture on the plan.</span>';return;}
   const it=item(sel);
-  el.innerHTML=`<b>${esc(TYPES[it.type].name)}</b><button class="btn" id="rotBtn">Rotate ↻ (R)</button><button class="btn" id="remBtn">Take out of room</button>`;
+  el.innerHTML=`<b>${esc(TYPES[it.type].name)}</b><button class="btn" id="rotBtn">Rotate ↻</button><button class="btn" id="remBtn">Take out of room</button>`;
   $('rotBtn').onclick=()=>change(()=>rotate(it));
   $('remBtn').onclick=()=>change(()=>{it.on=false;sel=null;});}
 function renderInv(){let s='';
@@ -467,9 +493,8 @@ function renderInv(){let s='';
   $('inv').innerHTML=s;
   document.querySelectorAll('[data-inv]').forEach(cb=>cb.onchange=()=>change(()=>{const it=item(cb.dataset.inv);it.on=cb.checked;clampItem(it);sel=cb.checked?it.id:null;}));}
 function renderWalls(){
-  $('wallBtns').innerHTML=['N','E','S','W'].map(w=>{const sw=S.swatches.find(x=>x.hex.toLowerCase()===S.walls[w].toLowerCase());
-    return `<button class="wallchip ${selWalls.has(w)?'on':''}" data-wsel="${w}"><span class="sw" style="background:${S.walls[w]}"></span><span>${WALLNAME[w]}<br><span class="hint">${esc(sw?sw.name:S.walls[w])}</span></span></button>`;}).join('');
-  document.querySelectorAll('[data-wsel]').forEach(b=>b.onclick=()=>{toggleWall(b.dataset.wsel);});
+  $('wallBtns').innerHTML=WLIST.map(w=>`<button class="wallchip ${selWalls.has(w)?'on':''}" data-wsel="${w}"><span class="sw" style="background:${S.walls[w]}"></span><span>${WALLNAME[w]}<br><span class="hint">${esc(swName(S.walls[w]))}</span></span></button>`).join('');
+  document.querySelectorAll('[data-wsel]').forEach(b=>b.onclick=()=>toggleWall(b.dataset.wsel));
   $('swatches').innerHTML=S.swatches.map((w,i)=>`<div class="swatch" data-sw="${i}" title="Paint the selected walls"><div class="blk" style="background:${w.hex}"></div>
     <div class="nm">${esc(w.name)}<br><span class="hx">${w.hex}</span></div><span class="x" data-del="${i}" title="Remove swatch">✕</span></div>`).join('');
   document.querySelectorAll('[data-sw]').forEach(d=>d.onclick=e=>{
@@ -477,15 +502,17 @@ function renderWalls(){
     if(e.target.dataset.del!==undefined){if(confirm(`Remove swatch "${S.swatches[i].name}"?`))change(()=>S.swatches.splice(i,1));return;}
     if(!selWalls.size){alert('Pick at least one wall first.');return;}
     change(()=>{for(const w of selWalls)S.walls[w]=S.swatches[i].hex;});});}
-function toggleWall(w){selWalls.has(w)?selWalls.delete(w):selWalls.add(w);renderWalls();renderPlan();}
+function toggleWall(w){selWalls.has(w)?selWalls.delete(w):selWalls.add(w);renderWalls();renderPlan();if(TAB==='compare')renderCompare();}
 function renderAll(){
   if(sel&&!item(sel)?.on)sel=null;
-  renderIso();renderPlan();renderSel();renderInv();renderWalls();
+  renderWalls();
+  if(TAB==='plan'){renderIso();renderPlan();renderSel();renderInv();}
+  if(TAB==='compare')renderCompare();
   document.querySelectorAll('#viewSeg button').forEach(b=>b.classList.toggle('on',+b.dataset.v===S.view));
   $('posters').value=S.posters;$('roomW').value=S.room.W;$('roomD').value=S.room.D;$('lblAll').checked=!!S.labels;
   $('undoBtn').disabled=!hist.length;}
 
-// ============ interaction ============
+// ============ plan interaction ============
 function rotate(it){const f=footprint(it),cx=(f.x0+f.x1)/2,cy=(f.y0+f.y1)/2;it.rot=(it.rot+90)%360;const [w,d]=dims(it);it.x=cx-w/2;it.y=cy-d/2;clampItem(it);}
 function snapItem(it){const [w,d]=dims(it),{W,D}=S.room,T=7,xs=[0,W],ys=[0,D];
   if(it.type!=='rug')for(const o of S.items){if(!o.on||o===it||o.type==='rug')continue;const g=footprint(o);xs.push(g.x0,g.x1);ys.push(g.y0,g.y1);}
@@ -508,7 +535,7 @@ $('plan').addEventListener('pointermove',e=>{if(!drag)return;const it=item(sel),
 const endDrag=()=>{if(!drag)return;commit(drag.prev);drag=null;renderAll();};
 $('plan').addEventListener('pointerup',endDrag);$('plan').addEventListener('pointercancel',endDrag);
 document.addEventListener('keydown',e=>{
-  if(e.target.matches('input,select,textarea'))return;
+  if(TAB!=='plan'||e.target.matches('input,select,textarea'))return;
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();undo();return;}
   if(!sel)return;const it=item(sel),st=e.shiftKey?10:1;
   const mv={ArrowLeft:[-st,0],ArrowRight:[st,0],ArrowUp:[0,-st],ArrowDown:[0,st]}[e.key];
@@ -523,30 +550,34 @@ $('presetN').onclick=()=>{if(confirm('Put the room back to how it is now? (Wall 
 $('lblAll').onchange=e=>change(()=>S.labels=e.target.checked);
 $('posters').onchange=e=>change(()=>S.posters=e.target.value);
 for(const [id,k] of[['roomW','W'],['roomD','D']])$(id).onchange=e=>{const v=clamp(Math.round(+e.target.value)||S.room[k],200,700);
-  change(()=>{S.room[k]=v;const w=item('wardrobe');S.items.forEach(i=>clampItem(i));});};
-$('allWalls').onclick=()=>{selWalls=new Set(['N','E','S','W']);renderWalls();renderPlan();};
+  change(()=>{S.room[k]=v;S.items.forEach(i=>clampItem(i));});};
+$('allWalls').onclick=()=>{selWalls=new Set(WLIST);renderWalls();renderPlan();if(TAB==='compare')renderCompare();};
 $('resetWalls').onclick=()=>change(()=>S.walls={...DEFAULT_WALLS});
-// swatch adding
+
+// ============ swatch sampler ============
 const normHex=h=>{h=h.trim();if(!h.startsWith('#'))h='#'+h;return /^#[0-9a-f]{6}$/i.test(h)?h.toLowerCase():null;};
-$('swColor').oninput=e=>$('swHex').value=e.target.value;
-$('swHex').oninput=e=>{const h=normHex(e.target.value);if(h)$('swColor').value=h;};
+function setPicked(hex){$('swColor').value=hex;$('swHex').value=hex;$('pick').style.background=hex;}
+$('swColor').oninput=e=>setPicked(e.target.value);
+$('swHex').oninput=e=>{const h=normHex(e.target.value);if(h){$('swColor').value=h;$('pick').style.background=h;}};
 $('swAdd').onclick=()=>{const h=normHex($('swHex').value);if(!h){alert('That colour code should look like #a8b89a.');return;}
   const name=$('swName').value.trim()||`Swatch ${S.swatches.length+1}`;
   change(()=>S.swatches.push({name,hex:h}));$('swName').value='';};
-$('photoIn').onchange=e=>{const f=e.target.files[0];if(!f)return;const img=new Image();
-  img.onload=()=>{const cv=$('photoCv'),sc=Math.min(1,560/img.width);cv.width=img.width*sc;cv.height=img.height*sc;
-    cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);cv.style.display='block';$('photoHint').style.display='block';};
-  img.src=URL.createObjectURL(f);};
-$('photoCv').onclick=e=>{const cv=$('photoCv'),r=cv.getBoundingClientRect();
+async function loadSampler(file){const bmp=await createImageBitmap(file);const cv=$('sampCv'),sc=Math.min(1,900/bmp.width);
+  cv.width=Math.round(bmp.width*sc);cv.height=Math.round(bmp.height*sc);cv.getContext('2d').drawImage(bmp,0,0,cv.width,cv.height);cv.style.display='block';}
+$('sampIn').onchange=e=>{const f=e.target.files[0];if(f)loadSampler(f);};
+document.addEventListener('paste',e=>{const it=[...(e.clipboardData?.items||[])].find(i=>i.type.startsWith('image/'));
+  if(it){e.preventDefault();$('addDetails').open=true;loadSampler(it.getAsFile());}});
+$('sampCv').onclick=e=>{const cv=$('sampCv'),r=cv.getBoundingClientRect();
   const x=Math.round((e.clientX-r.left)*cv.width/r.width),y=Math.round((e.clientY-r.top)*cv.height/r.height);
-  const d=cv.getContext('2d').getImageData(clamp(x-3,0,cv.width-7),clamp(y-3,0,cv.height-7),7,7).data;
+  const d=cv.getContext('2d').getImageData(clamp(x-2,0,cv.width-5),clamp(y-2,0,cv.height-5),5,5).data;
   let rr=0,gg=0,bb=0;for(let i=0;i<d.length;i+=4){rr+=d[i];gg+=d[i+1];bb+=d[i+2];}const n=d.length/4;
-  const hex='#'+[rr,gg,bb].map(v=>Math.round(v/n).toString(16).padStart(2,'0')).join('');
-  $('swColor').value=hex;$('swHex').value=hex;$('pick').style.background=hex;};
-// picture + layout sharing
+  setPicked('#'+[rr,gg,bb].map(v=>Math.round(v/n).toString(16).padStart(2,'0')).join(''));};
+
+// ============ picture + layout sharing ============
+function download(blobOrUrl,name){const a=document.createElement('a');a.download=name;a.href=typeof blobOrUrl==='string'?blobOrUrl:URL.createObjectURL(blobOrUrl);document.body.appendChild(a);a.click();a.remove();}
 $('pngBtn').onclick=()=>{const svg=$('iso'),vb=svg.viewBox.baseVal,xml=new XMLSerializer().serializeToString(svg),img=new Image();
   img.onload=()=>{const cv=document.createElement('canvas');cv.width=vb.width*2;cv.height=vb.height*2;const c=cv.getContext('2d');
-    c.drawImage(img,0,0,cv.width,cv.height);const a=document.createElement('a');a.download='green-room.png';a.href=cv.toDataURL('image/png');a.click();};
+    c.drawImage(img,0,0,cv.width,cv.height);cv.toBlob(b=>download(b,'green-room.png'),'image/png');};
   img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(xml);};
 $('copyBtn').onclick=async()=>{const txt=JSON.stringify({room:S.room,walls:S.walls,posters:S.posters,swatches:S.swatches,items:S.items.map(({id,type,x,y,rot,on})=>({id,type,x,y,rot,on}))});
   try{await navigator.clipboard.writeText(txt);alert('Layout copied. You can paste it to Claude or use "Paste layout" in another browser.');}
@@ -554,10 +585,32 @@ $('copyBtn').onclick=async()=>{const txt=JSON.stringify({room:S.room,walls:S.wal
 $('pasteBtn').onclick=()=>{const txt=prompt('Paste a layout here:');if(!txt)return;
   try{const o=JSON.parse(txt);if(!Array.isArray(o.items))throw 0;
     change(()=>{Object.assign(S,{room:o.room||S.room,walls:o.walls||S.walls,posters:o.posters||S.posters,swatches:o.swatches||S.swatches});
-      S.items=ITEM_DEFS.map(([id,type])=>o.items.find(i=>i.id===id)||{id,type,x:0,y:0,rot:0,on:false});S.items.forEach(i=>clampItem(i));});}
+      S.items=ITEM_DEFS.map(([id,type])=>o.items.find(i=>i.id===id&&i.type===type)||{id,type,x:0,y:0,rot:0,on:false});S.items.forEach(i=>clampItem(i));});}
   catch(e){alert("That doesn't look like a layout from this page.");}};
 
-renderAll();
+// ============ compare ============
+function renderCompare(){if(TAB!=='compare')return;
+  const ws=[...selWalls];
+  $('cmpWalls').innerHTML=ws.length?`Trying each colour on the <b>${ws.map(w=>WALLNAME[w]).join(', ')}</b>, seen from ${['📷 1','📷 4','📷 3','📷 2'][S.view]}. Change which walls in the Wall colours panel, or the camera on the Room plan tab. Tap a picture to use that colour.`
+    :'Pick at least one wall in the Wall colours panel.';
+  const grid=$('cmpGrid');
+  const opts=[{name:'Current colours',hex:null},...S.swatches];
+  grid.innerHTML=opts.map((o,i)=>`<div class="cmpcard" data-ci="${i}"><div class="cv"></div><div class="nm">${o.hex?`<span class="dot" style="background:${o.hex}"></span>`:''}${esc(o.name)}</div></div>`).join('');
+  grid.querySelectorAll('[data-ci]').forEach(c=>c.onclick=()=>{const o=opts[+c.dataset.ci];if(!o.hex||!ws.length)return;change(()=>{for(const w of ws)S.walls[w]=o.hex;});});
+  const wallsFor=o=>{const w={...S.walls};if(o.hex)for(const k of ws)w[k]=o.hex;return w;};
+  opts.forEach((o,i)=>{const m=isoMarkup(wallsFor(o),true);
+    grid.children[i].querySelector('.cv').innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="${m.vb}">${m.s}</svg>`;});}
+
+// ============ tabs ============
+function setTab(t){TAB=t;
+  document.querySelectorAll('.tabpane').forEach(p=>p.hidden=p.id!=='tab-'+t);
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  const side=$('side-'+t),card=$('wallsCard');
+  if(t==='plan')side.insertBefore(card,side.children[1]||null);else side.appendChild(card);
+  renderAll();}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+
+setTab('plan');
 </script>
 </body>
 </html>
